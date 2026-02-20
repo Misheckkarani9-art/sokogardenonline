@@ -33,7 +33,7 @@ def signup():
         # By use of the cursor exercurte the sql as you replace hthe 
         cursor.execute(sql,data)
 
-        # coommiit the changes to the database
+        # commit the changes to the database
         connection.commit()
 
 
@@ -41,8 +41,45 @@ def signup():
 
 
 
+# Below is the login/signin route
+@app.route("/api/signin" ,methods =["POST"])
+def signin():
+    if request.method=="POST":
+        #etract the two details entered on the form
+        email = request.form["email"]
+        password = request.form["password"]
 
 
+        #Create /establish cconnection too database
+        connection =pymysql.connect(host="localhost",user ="root",password="", database="sokogardenonline")
+
+           # Create a cursor
+        cursor =connection.cursor(pymysql.cursors.DictCursor)
+
+        #Sructure the sql query
+        sql = "SELECT * FROM users WHERE email = %s AND password = %s"
+
+        # put the data received from the foorm into a atuple
+        data  = (email,password)
+
+        #by the use of the cursor execute the sql 
+        cursor.execute(sql,data)
+        
+        # By the use of the cursor execute the sql
+        count =cursor.rowcount
+        # If there are records returns it means the password and the email aer wrong
+        if count == 0:
+            return jsonify({"message":"login failed"})
+        else:
+            #There ust be a user so we create a vvariable that will hold the details of the users fetched from the database
+            user=cursor.fetchone()
+            # Return the details too the front end as well as a message
+            return jsonify ({"message":"user logged in successfully", "user":user})
+        
+        
+
+
+     
 
 
 
