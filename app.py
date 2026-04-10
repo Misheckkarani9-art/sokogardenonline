@@ -2,10 +2,13 @@
 from flask import *
 import pymysql
 import os
+from flask_cors import CORS
+# cross origin resource sharing
 
 # Create an aplicatioon and give it a name
 
 app = Flask(__name__)
+CORS(app)
 
 
 # Configure the location to where your product images will be saved on your applicqation
@@ -25,7 +28,7 @@ def signup():
         # print(email)
         # print(password)
         # print(phone)
-        connection = pymysql.connect(host ="localhost",user ="root",password="", database="sokogardenonline")
+        connection = pymysql.connect(host ="mysql-karanimisheck22.alwaysdata.net",user ="karanimisheck22",password="modcom1234", database="karanimisheck22_sokogarden")
         # Create a cursor to execute the sql queries
         cursor =connection.cursor()
 
@@ -56,7 +59,7 @@ def signin():
 
 
         #Create /establish cconnection too database
-        connection =pymysql.connect(host="localhost",user ="root",password="", database="sokogardenonline")
+        connection =pymysql.connect(host="mysql-karanimisheck22.alwaysdata.net",user ="karanimisheck22",password="modcom1234", database="karanimisheck22_sokogarden")
 
            # Create a cursor
         cursor =connection.cursor(pymysql.cursors.DictCursor)
@@ -90,7 +93,8 @@ def Addproducts():
         product_name = request.form["product_name"]
         product_description = request.form["product_description"]
         product_cost = request.form["product_cost"]
-        # for the product phto we shall fetch it from fiiles as shown below
+        product_category = request.form["product_category"]
+        # for the product photo we shall fetch it from files as shown below
         product_photo = request.files["product_photo"]
 
         # Extract the file name of the product photo
@@ -102,28 +106,25 @@ def Addproducts():
         product_photo.save(photo_path)
 
         # print themm out to test whether you are receiving the details
-        # print(product_name, product_description,product_cost, product_photo)
+        print(product_name, product_description,product_cost,product_category, product_photo)
         # Establish connectioon
-        connection = pymysql.connect(host ="localhost",user="root",password="",database="sokogardenonline")
+        connection = pymysql.connect(host ="mysql-karanimisheck22.alwaysdata.net",user="karanimisheck22",password="modcom1234",database="karanimisheck22_sokogarden")
 
         cursor = connection.cursor()
 
         # structure the query to insert the product details to the database
-        sql= "INSERT INTO product_details(product_name, product_description, product_cost, product_photo) VALUES (%s, %s, %s, %s)"
+        sql= "INSERT INTO product_details(product_name, product_description, product_cost,product_category, product_photo) VALUES (%s, %s, %s, %s, %s)"
 
         # create a tupple that will hold the data from the whitchare current held onto the different variable declared
-        data= ( product_name,product_description,product_cost,filename)
+        data= ( product_name,product_description,product_cost,product_category,filename)
 
         # Use the cursor to execute the sql as you replace the placeholders with actual data
         cursor.execute(sql,data)
 
         # comit the changes to the database
         connection.commit()
-
-
-
-
-
+        
+        
         return jsonify({"message": "product added successfully"})
 
 
@@ -139,7 +140,7 @@ def Addproducts():
 @app.route("/api/get_products")
 def get_products():
     # create a connection to the Database
-    connection = pymysql.connect(host ="localhost",user="root",password="",database="sokogardenonline")
+    connection = pymysql.connect(host ="mysql-karanimisheck22.alwaysdata.net",user="karanimisheck22",password="modcom1234",database="karanimisheck22_sokogarden")
 
     #create a cursor.
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -218,4 +219,4 @@ def mpesa_payment():
 
 
 # Run the application
-app.run(debug=True)
+# app.run(debug=True)
